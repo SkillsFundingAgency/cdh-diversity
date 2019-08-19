@@ -15,6 +15,7 @@ using NCS.DSS.Diversity.Ioc;
 using NCS.DSS.Diversity.PostDiversityHttpTrigger.Service;
 using NCS.DSS.Diversity.Validation;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
 {
@@ -22,11 +23,11 @@ namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
     {
         [FunctionName("Post")]
         [ResponseType(typeof(Models.Diversity))]
-        [Response(HttpStatusCode = (int) HttpStatusCode.Created, Description = "Diversity Created", ShowSchema = true)]
-        [Response(HttpStatusCode = (int) HttpStatusCode.NoContent, Description = "Diversity does not exist", ShowSchema = false)]
-        [Response(HttpStatusCode = (int) HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
-        [Response(HttpStatusCode = (int) HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
-        [Response(HttpStatusCode = (int) HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Diversity Created", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Diversity does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Conflict, Description = "Diversity Details already exists for customer", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Diversity validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new diversity record for a given customer.")]
@@ -37,7 +38,7 @@ namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
             [Inject]IPostDiversityHttpTriggerService postDiversityService)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
-           if (string.IsNullOrEmpty(touchpointId))
+            if (string.IsNullOrEmpty(touchpointId))
             {
                 log.LogInformation("Unable to locate 'TouchpointId' in request header.");
                 return HttpResponseMessageHelper.BadRequest();
@@ -47,7 +48,7 @@ namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);
-            
+
             Models.Diversity diversityRequest;
 
             try
@@ -57,7 +58,7 @@ namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
             catch (JsonException ex)
             {
                 log.LogError("Json conversation of request body failed.", ex);
-                return HttpResponseMessageHelper.UnprocessableEntity($"{{Error Message: {ex.Message}}}");
+                return HttpResponseMessageHelper.UnprocessableEntity(JObject.FromObject(new { Error = ex.Message }));
             }
 
             if (diversityRequest == null)

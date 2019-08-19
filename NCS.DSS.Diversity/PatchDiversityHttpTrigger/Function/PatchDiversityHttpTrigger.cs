@@ -14,6 +14,7 @@ using NCS.DSS.Diversity.Ioc;
 using NCS.DSS.Diversity.PatchDiversityHttpTrigger.Service;
 using NCS.DSS.Diversity.Validation;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NCS.DSS.Diversity.PatchDiversityHttpTrigger.Function
 {
@@ -57,7 +58,7 @@ namespace NCS.DSS.Diversity.PatchDiversityHttpTrigger.Function
             catch (JsonException ex)
             {
                 log.LogError("Json conversation of request body failed.", ex);
-                return HttpResponseMessageHelper.UnprocessableEntity($"{{Error Message: {ex.Message}}}");
+                return HttpResponseMessageHelper.UnprocessableEntity(JObject.FromObject(new { Error = ex.Message }));
             }
 
             if (diversityPatchRequest == null)

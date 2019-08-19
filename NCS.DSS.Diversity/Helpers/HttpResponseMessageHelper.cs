@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NCS.DSS.Diversity.Helpers
 {
@@ -131,11 +132,11 @@ namespace NCS.DSS.Diversity.Helpers
             };
         }
 
-        public static HttpResponseMessage UnprocessableEntity(string errorMessage)
+        public static HttpResponseMessage UnprocessableEntity(JObject error)
         {
             return new HttpResponseMessage((HttpStatusCode)422)
             {
-                Content = new StringContent(JsonConvert.SerializeObject(errorMessage),
+                Content = new StringContent(JsonConvert.SerializeObject(error),
                     Encoding.UTF8, "application/json")
             };
         }
