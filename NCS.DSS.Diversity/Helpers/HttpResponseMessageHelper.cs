@@ -131,7 +131,14 @@ namespace NCS.DSS.Diversity.Helpers
             };
         }
 
-
+        public static HttpResponseMessage UnprocessableEntity(string errorMessage)
+        {
+            return new HttpResponseMessage((HttpStatusCode)422)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(errorMessage),
+                    Encoding.UTF8, "application/json")
+            };
+        }
         #endregion
 
     }

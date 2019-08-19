@@ -56,7 +56,8 @@ namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
             }
             catch (JsonException ex)
             {
-                return HttpResponseMessageHelper.UnprocessableEntity(ex);
+                log.LogError("Json conversation of request body failed.", ex);
+                return HttpResponseMessageHelper.UnprocessableEntity($"{{Error Message: {ex.Message}}}");
             }
 
             if (diversityRequest == null)

@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Diversity.Annotations;
 using NCS.DSS.Diversity.Cosmos.Helper;
@@ -57,7 +56,8 @@ namespace NCS.DSS.Diversity.PatchDiversityHttpTrigger.Function
             }
             catch (JsonException ex)
             {
-                return HttpResponseMessageHelper.UnprocessableEntity(ex);
+                log.LogError("Json conversation of request body failed.", ex);
+                return HttpResponseMessageHelper.UnprocessableEntity($"{{Error Message: {ex.Message}}}");
             }
 
             if (diversityPatchRequest == null)
