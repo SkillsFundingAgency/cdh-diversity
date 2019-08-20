@@ -18,6 +18,7 @@ using NCS.DSS.Diversity.Cosmos.Helper;
 using NCS.DSS.Diversity.PostDiversityHttpTrigger.Service;
 using NCS.DSS.Diversity.Validation;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
 {
@@ -99,7 +100,7 @@ namespace NCS.DSS.Diversity.PostDiversityHttpTrigger.Function
             catch (JsonException ex)
             {
                 _loggerHelper.LogException(log, correlationGuid, "Unable to retrieve body from req", ex);
-                return _httpResponseMessageHelper.UnprocessableEntity(req);
+                return _httpResponseMessageHelper.UnprocessableEntity(JObject.FromObject(new { Error = ex.Message }).ToString());
             }
 
             if (diversityRequest == null)
